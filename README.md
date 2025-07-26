@@ -56,28 +56,99 @@ An intelligent voice-based sales assistant that understands natural English (wit
 | Auth | Firebase Auth / OAuth 2.0 |
 | Hosting | Vercel, Firebase, Cloud Run |
 
-## 🚀 Development Phases
+## 🚀 Quick Start
 
-### Phase 1: MVP Foundation
-- Admin panel with user management
-- Database setup and authentication
-- Basic voice interface
-- Core AI conversation engine
+### Prerequisites
+- Node.js 18+ and npm
+- Docker and Docker Compose
+- PostgreSQL 15+
+- Redis 7+
 
-### Phase 2: CRM Integration
-- Multi-CRM API connections
+### Development Setup
+
+1. **Clone and Install Dependencies**
+```bash
+# Install backend dependencies
+npm install
+
+# Install frontend dependencies
+cd frontend && npm install
+```
+
+2. **Environment Configuration**
+```bash
+# Copy environment template
+cp .env.example .env
+
+# Update database and Redis connection details in .env
+```
+
+3. **Start with Docker (Recommended)**
+```bash
+# Start all services (PostgreSQL, Redis, Backend, Frontend)
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+```
+
+4. **Or Start Manually**
+```bash
+# Start PostgreSQL and Redis locally
+# Then run:
+npm run dev
+```
+
+5. **Run Tests**
+```bash
+# Backend tests
+npm test
+
+# Frontend tests
+cd frontend && npm test
+
+# Test coverage
+npm run test:coverage
+```
+
+### Available Scripts
+
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start both backend and frontend in development |
+| `npm run dev:backend` | Start only backend server |
+| `npm run dev:frontend` | Start only frontend application |
+| `npm run build` | Build both backend and frontend for production |
+| `npm test` | Run backend test suite |
+| `npm run lint` | Run ESLint on backend code |
+| `npm run format` | Format code with Prettier |
+
+### Development Phases
+
+#### ✅ Phase 1: Foundation (COMPLETED)
+- ✅ Project setup with TypeScript, Express, React
+- ✅ PostgreSQL and Redis configuration
+- ✅ Docker development environment
+- ✅ Testing framework setup
+- ✅ ESLint and Prettier configuration
+
+#### 🔄 Phase 2: Core Services
+- Authentication and authorization system
+- User management API and interface
+- Database models and migrations
+- Basic admin dashboard
+
+#### 📋 Phase 3: AI & Voice Integration
+- Voice processing service setup
+- AI engine integration
+- Natural language processing
+- Conversation context management
+
+#### 🔗 Phase 4: CRM Integration
+- Multi-CRM API abstraction layer
+- Salesforce, Creatio, and SAP connectors
 - Lead and task management
-- Voice-powered CRM operations
-
-### Phase 3: Advanced Features
-- Email integration and summarization
-- Calendar and meeting scheduling
-- Analytics and reporting
-
-### Phase 4: Mobile & Scale
-- Mobile applications
-- Multi-language support
-- Advanced analytics dashboard
+- Data synchronization
 
 ## 📋 Current Status
 
