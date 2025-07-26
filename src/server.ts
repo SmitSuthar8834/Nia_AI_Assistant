@@ -51,7 +51,11 @@ app.get('/health', (_req, res) => {
   });
 });
 
-// API routes will be added here
+// API routes
+import authRoutes from '@/routes/auth.routes';
+app.use('/api/auth', authRoutes);
+
+// Catch-all for unknown API routes
 app.use('/api', (_req, res) => {
   res.status(404).json({ message: 'API endpoint not found' });
 });

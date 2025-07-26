@@ -13,12 +13,26 @@ export const Login: React.FC = () => {
     setIsLoading(true);
 
     try {
-      // TODO: Implement actual authentication
-      // For now, just simulate login
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      navigate('/');
+      const response = await fetch('http://localhost:3000/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // Store user info in localStorage for now
+        localStorage.setItem('user', JSON.stringify(data.user));
+        navigate('/');
+      } else {
+        alert(data.message || 'Login failed');
+      }
     } catch (error) {
       console.error('Login failed:', error);
+      alert('Login failed. Please try again.');
     } finally {
       setIsLoading(false);
     }
