@@ -138,7 +138,17 @@ export class VoiceProcessor {
         createdAt: new Date()
       };
 
-      // TODO: Store voice profile in database
+      // Store voice profile in database
+      const query = `
+        INSERT INTO voice_profiles (user_id, samples, average_confidence, languages)
+        VALUES ($1, $2, $3, $4)
+        ON CONFLICT (user_id) DO UPDATE SET
+          samples = $2,
+          average_confidence = $3,
+          languages = $4,
+          updated_at = NOW()
+      `;
+      await pool.query(query, [userId, voiceProfile.samples, voiceProfile.averageConfidence, voiceProfile.languages]);
       logger.info(`Voice profile trained for user ${userId}:`, voiceProfile);
     } catch (error) {
       logger.error('Voice training error:', error);
@@ -148,17 +158,11 @@ export class VoiceProcessor {
 
   async getVoiceProfile(userId: string): Promise<any> {
     try {
-      // TODO: Retrieve voice profile from database
-      return {
-        userId,
-        languagePreferences: ['en-IN', 'hi-IN'],
-        voiceSettings: {
-          speed: 1.0,
-          pitch: 0.0,
-          volume: 0.0
-        },
-        trainingStatus: 'completed'
-      };
+      const { rows } = await pool.query('SELECT * FROM voice_profiles WHERE user_id = $1', [userId]);
+      if (rows.length === 0) {
+        throw new Error('Voice profile not found');
+      }
+      return rows[0];
     } catch (error) {
       logger.error('Get voice profile error:', error);
       throw new Error('Failed to retrieve voice profile');
@@ -167,7 +171,19 @@ export class VoiceProcessor {
 
   async updateVoiceSettings(userId: string, settings: any): Promise<void> {
     try {
-      // TODO: Update voice settings in database
+      const { speed, pitch, volume } = settings;
+      const query = `
+        UPDATE voice_profiles
+        SET voice_settings = jsonb_set(
+          jsonb_set(
+            jsonb_set(voice_settings, '{speed}', $2::jsonb),
+            '{pitch}', $3::jsonb
+          ),
+          '{volume}', $4::jsonb
+        )
+        WHERE user_id = $1
+      `;
+      await pool.query(query, [userId, speed, pitch, volume]);
       logger.info(`Voice settings updated for user ${userId}:`, settings);
     } catch (error) {
       logger.error('Update voice settings error:', error);
@@ -175,3 +191,4 @@ export class VoiceProcessor {
     }
   }
 }
+import { pool } from '../database/connection';

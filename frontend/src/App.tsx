@@ -6,11 +6,13 @@ import { Toaster } from 'react-hot-toast';
 // Layout Components
 import Layout from './components/layout/Layout';
 import AuthLayout from './components/layout/AuthLayout';
+import DashboardLayout from './pages/admin/DashboardLayout';
 
 // Auth Pages
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import ForgotPassword from './pages/auth/ForgotPassword';
+import AdminLogin from './pages/admin/AdminLogin';
 
 // Admin Pages
 import Dashboard from './pages/admin/Dashboard';
@@ -63,6 +65,7 @@ function App() {
                   <Route path="register" element={<Register />} />
                   <Route path="forgot-password" element={<ForgotPassword />} />
                 </Route>
+                <Route path="/admin/login" element={<AdminLogin />} />
 
                 {/* Protected Routes */}
                 <Route path="/" element={<Layout />}>
@@ -72,7 +75,8 @@ function App() {
                   <Route path="dashboard" element={<Dashboard />} />
                   
                   {/* Admin Routes */}
-                  <Route path="admin">
+                  <Route path="admin" element={<DashboardLayout />}>
+                    <Route index element={<Dashboard />} />
                     <Route path="users" element={<UserManagement />} />
                     <Route path="monitoring" element={<SystemMonitoring />} />
                     <Route path="crm-config" element={<CRMConfiguration />} />
