@@ -1,80 +1,83 @@
-# Implementation Plan
+# Implementation Plan - Microservices Architecture
 
-- [x] 1. Set up project foundation and development environment
+## 🏗️ Architecture Overview
 
+This implementation follows a **microservices architecture** with the following services:
 
+### Core Services
+- **API Gateway** (Port 3000) - Request routing, authentication, and rate limiting
+- **Auth Service** (Port 3001) - User authentication and authorization
+- **Voice Service** (Port 3002) - Speech processing and voice interactions  
+- **AI Service** (Port 3004) - Natural language processing and AI responses
+- **CRM Service** (Port 3003) - CRM integrations (Salesforce, Creatio, SAP)
+- **Notification Service** (Port 3005) - Push notifications and alerts
 
+### Infrastructure
+- **PostgreSQL** - Separate databases per service (nia_auth, nia_voice, nia_ai, nia_crm, nia_notifications)
+- **Redis** - Caching and session storage across services
+- **RabbitMQ** - Message queue for inter-service communication
+- **Docker Compose** - Container orchestration for development
 
+### Frontend
+- **React Application** (Port 3006) - Modern web interface with Tailwind CSS
 
+---
 
-
-
-
-
-  - Initialize Node.js backend with Express framework and TypeScript configuration
-  - Set up React.js frontend with Tailwind CSS and TypeScript
-  - Configure PostgreSQL database with connection pooling
-  - Set up Redis for caching and session management
-  - Create Docker containers for development environment
-  - Configure ESLint, Prettier, and testing frameworks (Jest, Supertest)
+- [x] 1. Set up microservices foundation and development environment
+  - Initialize microservices architecture with Docker Compose
+  - Set up API Gateway with Express framework and service routing
+  - Configure separate PostgreSQL databases for each service
+  - Set up Redis for caching and session management across services
+  - Add RabbitMQ for inter-service messaging
+  - Create Docker containers for all services (Gateway, Auth, Voice, AI, CRM, Notifications)
+  - Configure service discovery and load balancing
   - _Requirements: 1.1, 2.1, 5.1_
 
-- [x] 2. Implement core database schema and models
-
-
-
-
-
-
-
-
-
-  - [ ] 2.1 Create user management database tables
-    - Write SQL migration scripts for users, roles, permissions, and sessions tables
-    - Implement TypeScript interfaces for User, Role, and Session models
-    - Create database connection utilities with error handling
-
-
+- [x] 2. Implement microservices database architecture
+  - [x] 2.1 Create Auth Service database schema
+    - Set up dedicated nia_auth database with users, roles, sessions, and audit tables
+    - Implement JWT-based authentication with secure password hashing
+    - Create user management APIs with role-based access control
+    - Add password reset and session management functionality
     - _Requirements: 1.4, 5.1, 5.2, 5.3_
 
-  - [ ] 2.2 Create voice and AI data tables
-    - Write SQL migration scripts for voice_profiles, conversations, and intent_logs tables
-
-
-    - Implement TypeScript interfaces for VoiceProfile and ConversationContext models
-    - Create database indexes for performance optimization
+  - [x] 2.2 Create Voice Service database schema
+    - Set up dedicated nia_voice database with voice_profiles, conversations, and interaction logs
+    - Implement voice training data storage and audio sample management
+    - Create conversation context and session management
+    - Add voice interaction analytics and performance tracking
     - _Requirements: 6.1, 14.1, 14.6_
 
-  - [ ] 2.3 Create CRM integration data tables
-    - Write SQL migration scripts for crm_configurations, crm_sync_logs, and crm_cache tables
-    - Implement TypeScript interfaces for CRM data models (LeadData, TaskData, MeetingData)
-    - Create foreign key relationships and constraints
+  - [x] 2.3 Create CRM Service database schema
+    - Set up dedicated nia_crm database with configurations, sync logs, and cache tables
+    - Implement multi-CRM data mapping and synchronization
+    - Create lead, task, and meeting mapping tables for cross-CRM tracking
+    - Add CRM operation logging and error handling
     - _Requirements: 8.5, 16.2, 20.1_
 
-- [ ] 3. Build authentication and authorization system
-  - [ ] 3.1 Implement JWT-based authentication service
-    - Create JWT token generation and validation utilities
-    - Implement password hashing using bcrypt
-    - Build login/logout API endpoints with proper error handling
-    - Write unit tests for authentication functions
+- [x] 3. Build Authentication Service (Microservice)
+  - [x] 3.1 Implement Auth Service with JWT authentication
+    - Create dedicated authentication microservice on port 3001
+    - Implement JWT token generation, validation, and refresh mechanisms
+    - Build secure password hashing with bcrypt and salt rounds
+    - Add login, register, forgot password, and reset password endpoints
+    - Implement session management with Redis for token blacklisting
     - _Requirements: 1.2, 1.3, 4.2, 15.1, 15.2_
 
-  - [ ] 3.2 Create role-based access control middleware
-    - Implement authorization middleware for API routes
-    - Create permission checking utilities
-    - Build role management API endpoints
-    - Write integration tests for authorization flows
+  - [x] 3.2 Create API Gateway authentication middleware
+    - Implement centralized authentication middleware in API Gateway
+    - Add JWT token validation for all protected service routes
+    - Create user context propagation to downstream services via headers
+    - Build rate limiting and request throttling for security
+    - Add audit logging for all authentication attempts
     - _Requirements: 1.4, 3.3, 15.1_
 
-
-
-
-  - [ ] 3.3 Build user management API endpoints
-    - Create CRUD operations for user accounts
-    - Implement user registration with email validation
-    - Build password reset functionality with secure tokens
-    - Write API tests for all user management endpoints
-
+  - [x] 3.3 Build user management and role-based access control
+    - Create user CRUD operations with role-based permissions
+    - Implement hierarchical role system (admin, manager, sales_rep, user)
+    - Build user registration with email validation and account activation
+    - Add comprehensive user profile management and settings
+    - Create admin interfaces for user management and role assignment
     - _Requirements: 1.4, 1.5, 1.6, 4.3_
 
 - [ ] 4. Create admin dashboard frontend
@@ -100,77 +103,87 @@
     - Add system configuration management forms
     - _Requirements: 2.3, 3.4, 3.5_
 
-- [ ] 5. Implement voice processing service
-  - [ ] 5.1 Set up Google Speech-to-Text integration
-    - Configure Google Cloud Speech-to-Text API with en-IN locale
-    - Implement real-time audio streaming and processing
-    - Create audio format conversion utilities
-    - Write unit tests for speech recognition functions
+- [x] 5. Implement Voice Processing Service (Microservice)
+  - [x] 5.1 Set up Voice Service with Google Speech APIs
+    - Create dedicated voice processing microservice on port 3002
+    - Configure Google Cloud Speech-to-Text API with en-IN locale support
+    - Implement real-time WebSocket audio streaming and processing
+    - Add support for multiple languages (English, Hindi, Hinglish)
+    - Create audio format conversion and noise reduction utilities
     - _Requirements: 6.1, 6.2, 23.1_
 
-  - [ ] 5.2 Build Text-to-Speech functionality
-    - Integrate Google Text-to-Speech API
-    - Implement voice synthesis with natural speech patterns
-    - Create audio caching for common responses
-    - Add support for multiple languages and accents
+  - [x] 5.2 Build Text-to-Speech functionality with natural voices
+    - Integrate Google Text-to-Speech API with Indian English voices
+    - Implement voice synthesis with natural speech patterns and intonation
+    - Create audio response caching for improved performance
+    - Add voice customization (speed, pitch, volume) per user preferences
+    - Build audio streaming for real-time voice responses
     - _Requirements: 6.3, 23.2, 23.3_
 
-  - [ ] 5.3 Create voice profile management
-    - Implement voice training and calibration system
-    - Build user-specific voice profile storage
-    - Create voice recognition accuracy tracking
-    - Add voice profile backup and restore functionality
+  - [x] 5.3 Create voice profile management and training system
+    - Implement user-specific voice profile creation and storage
+    - Build voice training system with audio sample collection
+    - Create voice recognition accuracy tracking and improvement
+    - Add voice profile backup, restore, and migration functionality
+    - Implement voice adaptation for better recognition over time
     - _Requirements: 24.1, 24.2, 24.3, 24.5_
 
-- [ ] 6. Build AI engine service
-  - [ ] 6.1 Integrate LLM for natural language processing
-    - Set up Gemini Pro or GPT-4 API integration
-    - Implement prompt engineering for sales-specific contexts
-    - Create response generation with conversation context
-    - Write unit tests for AI service functions
+- [ ] 6. Build AI Engine Service (Microservice)
+  - [ ] 6.1 Create AI Service with LLM integration
+    - Create dedicated AI processing microservice on port 3004
+    - Set up Gemini Pro and GPT-4 API integration with fallback mechanisms
+    - Implement prompt engineering for sales-specific contexts and scenarios
+    - Create response generation with conversation context and memory
+    - Add AI model switching and performance optimization
     - _Requirements: 6.4, 7.4, 14.2_
 
-  - [ ] 6.2 Implement intent detection and entity extraction
+  - [ ] 6.2 Implement intent detection and entity extraction pipeline
     - Build custom NLP pipeline for sales intents (create_lead, schedule_meeting, etc.)
-    - Implement named entity recognition for contact information
-    - Create structured JSON output generation
-    - Add confidence scoring and validation
+    - Implement named entity recognition for contact information extraction
+    - Create structured JSON output generation with confidence scoring
+    - Add intent classification with machine learning models
+    - Build entity validation and data enrichment capabilities
     - _Requirements: 7.1, 7.2, 7.5_
 
-  - [ ] 6.3 Create conversation context management
-    - Implement conversation memory and context preservation
-    - Build context switching for multiple topics
-    - Create conversation summarization functionality
-    - Add context persistence across sessions
+  - [ ] 6.3 Create conversation context and memory management
+    - Implement distributed conversation memory across service instances
+    - Build context switching for multiple topics and conversation threads
+    - Create conversation summarization and key point extraction
+    - Add context persistence across sessions with Redis caching
+    - Implement context sharing between voice and text interactions
     - _Requirements: 14.1, 14.2, 14.3, 14.6_
 
-- [ ] 7. Develop CRM integration service
-  - [ ] 7.1 Build unified CRM API abstraction layer
-    - Create base CRM client interface with common operations
-    - Implement error handling and retry logic with exponential backoff
-    - Build API response normalization across different CRM systems
-    - Write integration tests for CRM abstraction layer
+- [x] 7. Develop CRM Integration Service (Microservice)
+  - [x] 7.1 Build unified CRM API abstraction layer
+    - Create dedicated CRM integration microservice on port 3003
+    - Build base CRM adapter interface with common operations across systems
+    - Implement error handling, retry logic, and circuit breaker patterns
+    - Create API response normalization and data mapping utilities
+    - Add comprehensive logging and monitoring for CRM operations
     - _Requirements: 8.4, 16.7, 20.4_
 
-  - [ ] 7.2 Implement Salesforce integration
+  - [ ] 7.2 Implement Salesforce integration adapter
     - Set up Salesforce REST API client with OAuth 2.0 authentication
-    - Implement lead, task, and meeting CRUD operations
-    - Build SOQL query generation for data retrieval
-    - Create webhook handling for real-time updates
+    - Implement lead, task, and meeting CRUD operations with jsforce
+    - Build SOQL query generation and data retrieval mechanisms
+    - Create webhook handling for real-time Salesforce updates
+    - Add Salesforce-specific error handling and rate limiting
     - _Requirements: 8.1, 8.2, 8.3, 16.1, 16.2_
 
-  - [ ] 7.3 Implement Creatio integration
-    - Set up Creatio OData API client with authentication
+  - [ ] 7.3 Implement Creatio integration adapter
+    - Set up Creatio OData API client with authentication mechanisms
     - Implement lead, task, and meeting operations using OData protocol
-    - Build query generation for Creatio data model
-    - Create data synchronization with conflict resolution
+    - Build dynamic query generation for Creatio data model
+    - Create bidirectional data synchronization with conflict resolution
+    - Add Creatio-specific field mapping and validation
     - _Requirements: 8.1, 8.2, 8.3, 16.1, 16.2_
 
-  - [ ] 7.4 Build CRM configuration management
-    - Create CRM connection setup wizards for each system
-    - Implement OAuth token management and refresh logic
-    - Build connection testing and health monitoring
-    - Add CRM switching functionality for multi-CRM users
+  - [x] 7.4 Build CRM configuration and sync management
+    - Create CRM connection setup and configuration management
+    - Implement OAuth token management, refresh, and secure storage
+    - Build connection testing, health monitoring, and status reporting
+    - Add automated periodic sync with configurable intervals
+    - Create CRM switching functionality for multi-CRM users
     - _Requirements: 16.1, 16.3, 16.4, 20.1, 20.5_
 
 - [ ] 8. Create lead management functionality
@@ -261,26 +274,29 @@
     - Add email-to-task conversion functionality
     - _Requirements: 9.4_
 
-- [ ] 12. Create notification and alert system
-  - [ ] 12.1 Implement push notification service
-    - Set up Firebase Cloud Messaging for web and mobile
-    - Create notification templates for different event types
-    - Implement notification delivery tracking
-    - Build notification preference management
+- [ ] 12. Create Notification Service (Microservice)
+  - [ ] 12.1 Implement push notification microservice
+    - Create dedicated notification service on port 3005
+    - Set up Firebase Cloud Messaging for web and mobile notifications
+    - Create notification templates and dynamic content generation
+    - Implement notification delivery tracking and status monitoring
+    - Build user notification preference management and opt-out functionality
     - _Requirements: 21.1, 21.2, 21.5_
 
-  - [ ] 12.2 Build real-time notification system
-    - Implement WebSocket connections for real-time updates
-    - Create notification queuing and delivery system
-    - Build notification retry logic for failed deliveries
-    - Add notification history and read receipts
+  - [ ] 12.2 Build real-time notification system with message queues
+    - Implement WebSocket connections through API Gateway for real-time updates
+    - Create notification queuing system with RabbitMQ for reliability
+    - Build notification retry logic with exponential backoff for failed deliveries
+    - Add notification history, read receipts, and delivery confirmation
+    - Implement notification batching and rate limiting per user
     - _Requirements: 21.3, 21.6, 21.7_
 
-  - [ ] 12.3 Create notification management interface
-    - Build notification center with filtering
-    - Create notification preference settings
-    - Implement notification scheduling and automation
-    - Add notification analytics and delivery reports
+  - [ ] 12.3 Create notification management and analytics interface
+    - Build notification center with filtering, search, and categorization
+    - Create comprehensive notification preference settings per user
+    - Implement notification scheduling, automation rules, and triggers
+    - Add notification analytics, delivery reports, and engagement metrics
+    - Build admin interface for system-wide notification management
     - _Requirements: 21.4, 21.5_
 
 - [ ] 13. Build analytics and reporting system
@@ -394,17 +410,20 @@
     - Add performance and load testing
     - _Requirements: All requirements validation_
 
-- [ ] 19. Deploy and configure production environment
-  - [ ] 19.1 Set up production infrastructure
-    - Configure production servers with Docker containers
-    - Set up load balancing and auto-scaling
-    - Implement monitoring and alerting systems
-    - Create deployment pipelines with CI/CD
+- [ ] 19. Deploy microservices to production environment
+  - [ ] 19.1 Set up production microservices infrastructure
+    - Configure production Docker Swarm or Kubernetes cluster
+    - Set up service discovery, load balancing, and auto-scaling for each microservice
+    - Implement centralized logging with ELK stack for all services
+    - Create monitoring and alerting with Prometheus and Grafana
+    - Build CI/CD pipelines for independent service deployments
     - _Requirements: System deployment and scaling_
 
-  - [ ] 19.2 Configure security and compliance
-    - Implement SSL/TLS certificates and security headers
-    - Set up firewall rules and network security
-    - Configure data encryption at rest and in transit
-    - Add compliance monitoring and reporting
+  - [ ] 19.2 Configure microservices security and compliance
+    - Implement SSL/TLS certificates and security headers for all services
+    - Set up API Gateway security policies and rate limiting
+    - Configure service-to-service authentication with mutual TLS
+    - Add network segmentation and firewall rules between services
+    - Implement data encryption at rest and in transit across all services
+    - Create compliance monitoring and audit trails for distributed system
     - _Requirements: 15.5, 15.6, 25.4, 25.5_  
