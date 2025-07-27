@@ -55,26 +55,103 @@ interface RegisterData {
 
 export const authService = {
   async login(email: string, password: string): Promise<LoginResponse> {
-    const response = await api.post('/auth/login', { email, password });
-    return response.data;
+    // Mock authentication for testing UI
+    await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate network delay
+    
+    if (email === 'admin@nia.ai' && password === 'admin123') {
+      const mockResponse: LoginResponse = {
+        token: 'mock-jwt-token-' + Date.now(),
+        user: {
+          id: '1',
+          email: 'admin@nia.ai',
+          firstName: 'Admin',
+          lastName: 'User',
+          role: {
+            id: '1',
+            name: 'admin',
+            permissions: ['admin', 'user_management', 'system_config', 'analytics']
+          },
+          isActive: true
+        }
+      };
+      return mockResponse;
+    } else if (email === 'user@nia.ai' && password === 'user123') {
+      const mockResponse: LoginResponse = {
+        token: 'mock-jwt-token-' + Date.now(),
+        user: {
+          id: '2',
+          email: 'user@nia.ai',
+          firstName: 'Test',
+          lastName: 'User',
+          role: {
+            id: '2',
+            name: 'sales_rep',
+            permissions: ['voice_assistant', 'crm_access', 'task_management']
+          },
+          isActive: true
+        }
+      };
+      return mockResponse;
+    } else {
+      throw new Error('Invalid credentials');
+    }
   },
 
   async register(userData: RegisterData): Promise<LoginResponse> {
-    const response = await api.post('/auth/register', userData);
-    return response.data;
+    // Mock registration for testing UI
+    await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate network delay
+    
+    const mockResponse: LoginResponse = {
+      token: 'mock-jwt-token-' + Date.now(),
+      user: {
+        id: Date.now().toString(),
+        email: userData.email,
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        role: {
+          id: '2',
+          name: 'sales_rep',
+          permissions: ['voice_assistant', 'crm_access']
+        },
+        isActive: true
+      }
+    };
+    return mockResponse;
   },
 
   async getCurrentUser() {
-    const response = await api.get('/auth/me');
-    return response.data;
+    // Mock current user for testing UI
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      throw new Error('No token found');
+    }
+    
+    await new Promise(resolve => setTimeout(resolve, 500)); // Simulate network delay
+    
+    return {
+      id: '1',
+      email: 'admin@nia.ai',
+      firstName: 'Admin',
+      lastName: 'User',
+      role: {
+        id: '1',
+        name: 'admin',
+        permissions: ['admin', 'user_management', 'system_config', 'analytics']
+      },
+      isActive: true
+    };
   },
 
   async forgotPassword(email: string): Promise<void> {
-    await api.post('/auth/forgot-password', { email });
+    // Mock forgot password for testing UI
+    await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate network delay
+    console.log(`Mock: Password reset email sent to ${email}`);
   },
 
   async resetPassword(token: string, password: string): Promise<void> {
-    await api.post('/auth/reset-password', { token, password });
+    // Mock reset password for testing UI
+    await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate network delay
+    console.log(`Mock: Password reset for token ${token}`);
   },
 
   logout(): void {
