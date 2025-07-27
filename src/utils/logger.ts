@@ -1,6 +1,8 @@
 import winston from 'winston';
+import { existsSync, mkdirSync } from 'fs';
 
-const logLevel = process.env.LOG_LEVEL || 'info';
+const logLevel = process.env['LOG_LEVEL'] || 'info';
+
 const logFormat = winston.format.combine(
   winston.format.timestamp(),
   winston.format.errors({ stack: true }),
@@ -25,7 +27,8 @@ export const logger = winston.createLogger({
   defaultMeta: { service: 'nia-admin-system' },
   transports: [
     new winston.transports.Console({
-      format: process.env.NODE_ENV === 'production' ? logFormat : consoleFormat,
+      format:
+        process.env['NODE_ENV'] === 'production' ? logFormat : consoleFormat,
     }),
     new winston.transports.File({
       filename: 'logs/error.log',
@@ -42,7 +45,6 @@ export const logger = winston.createLogger({
 });
 
 // Create logs directory if it doesn't exist
-import { existsSync, mkdirSync } from 'fs';
 if (!existsSync('logs')) {
   mkdirSync('logs');
 }

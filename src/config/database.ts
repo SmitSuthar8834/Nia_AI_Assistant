@@ -4,16 +4,16 @@ import { logger } from '@/utils/logger';
 let pool: Pool;
 
 const dbConfig: PoolConfig = {
-  host: process.env.DB_HOST || 'localhost',
-  port: parseInt(process.env.DB_PORT || '5432'),
-  database: process.env.DB_NAME || 'nia_admin',
-  user: process.env.DB_USER || 'postgres',
-  password: process.env.DB_PASSWORD || 'password',
-  max: parseInt(process.env.DB_POOL_MAX || '20'),
-  min: parseInt(process.env.DB_POOL_MIN || '5'),
-  idleTimeoutMillis: parseInt(process.env.DB_IDLE_TIMEOUT || '30000'),
-  connectionTimeoutMillis: parseInt(process.env.DB_CONNECTION_TIMEOUT || '2000'),
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+  host: process.env['DB_HOST'] || 'localhost',
+  port: parseInt(process.env['DB_PORT'] || '5432'),
+  database: process.env['DB_NAME'] || 'nia_admin',
+  user: process.env['DB_USER'] || 'postgres',
+  password: process.env['DB_PASSWORD'] || 'password',
+  max: parseInt(process.env['DB_POOL_MAX'] || '20'),
+  min: parseInt(process.env['DB_POOL_MIN'] || '5'),
+  idleTimeoutMillis: parseInt(process.env['DB_IDLE_TIMEOUT'] || '30000'),
+  connectionTimeoutMillis: parseInt(process.env['DB_CONNECTION_TIMEOUT'] || '2000'),
+  ssl: process.env['NODE_ENV'] === 'production' ? { rejectUnauthorized: false } : false,
 };
 
 export async function connectDatabase(): Promise<void> {

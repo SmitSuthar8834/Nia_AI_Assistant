@@ -1,208 +1,223 @@
-# 🤖 Nia AI Sales Assistant
+# Nia AI Sales Assistant
 
-An intelligent voice-based sales assistant that understands natural English (with Indian accent support), integrates with CRMs like Creatio, SAP, and Salesforce, and performs sales tasks like creating leads, scheduling meetings, and reading emails.
-
-## 🌟 Key Features
-
-- **Natural Voice Interaction** - Conversational AI with Indian English accent support
-- **Multi-CRM Integration** - Works with Creatio, Salesforce, and SAP
-- **Smart Lead Management** - Voice-powered lead creation and tracking
-- **Meeting Scheduling** - Automated calendar management with Google Meet integration
-- **Email Intelligence** - Reads and summarizes emails with action items
-- **Task Automation** - Voice-controlled task creation and follow-up reminders
-- **Admin Dashboard** - Comprehensive user and system management
-- **Mobile Support** - Responsive web and native mobile apps
-- **Multi-language** - Supports English, Hindi, and Hinglish
-- **Analytics & Reporting** - Sales performance tracking and insights
+A comprehensive voice-powered AI sales assistant with CRM integration, built using microservices architecture.
 
 ## 🏗️ Architecture
 
-```
-+------------------+
-| Web / Mobile App |
-+--------+---------+
-         |
-+-----------v-----------+
-|  Voice Handler (STT)  |
-+-----------+-----------+
-         |
-+-----------v-----------+
-|     AI Engine (LLM)   |
-|  (Gemini / GPT etc.)  |
-+-----------+-----------+
-         |
-+-----------v-----------+
-| Integration Middleware|
-+-----------+-----------+
-         |
-+--------+--------+--------+--------+
-|        |        |        |        |
-+---v---+ +---v---+ +---v---+ +---v---+
-|Creatio| |Salesf.| | SAP   | |Google |
-| API   | | API   | |OData  | | APIs  |
-+-------+ +-------+ +-------+ +-------+
-```
+This application follows a microservices architecture with the following services:
 
-## 💻 Tech Stack
+### Core Services
+- **API Gateway** (Port 3000) - Routes requests and handles authentication
+- **Auth Service** (Port 3001) - User authentication and authorization
+- **Voice Service** (Port 3002) - Speech processing and voice interactions
+- **AI Service** (Port 3004) - Natural language processing and AI responses
+- **CRM Service** (Port 3003) - CRM integrations (Salesforce, Creatio, SAP)
+- **Notification Service** (Port 3005) - Push notifications and alerts
 
-| Layer | Technology |
-|-------|------------|
-| Frontend | React.js, Tailwind CSS |
-| Mobile | Flutter / React Native |
-| Voice | Google STT (en-IN), Whisper |
-| AI Core | Gemini API / OpenAI GPT-4 |
-| Backend | Node.js (Express) / Python (FastAPI) |
-| Database | MongoDB / PostgreSQL |
-| Auth | Firebase Auth / OAuth 2.0 |
-| Hosting | Vercel, Firebase, Cloud Run |
+### Infrastructure
+- **PostgreSQL** - Primary database (separate DBs per service)
+- **Redis** - Caching and session storage
+- **RabbitMQ** - Message queue for inter-service communication
+
+### Frontend
+- **React Application** (Port 3006) - Modern web interface with Tailwind CSS
 
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Node.js 18+ and npm
 - Docker and Docker Compose
-- PostgreSQL 15+
-- Redis 7+
+- Node.js 18+ (for development)
+- Google Cloud credentials (for voice processing)
 
 ### Development Setup
 
-1. **Clone and Install Dependencies**
-```bash
-# Install backend dependencies
-npm install
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd nia-ai-sales-assistant
+   ```
 
-# Install frontend dependencies
-cd frontend && npm install
-```
+2. **Set up environment variables**
+   ```bash
+   cp .env.example .env
+   # Edit .env with your configuration
+   ```
 
-2. **Environment Configuration**
-```bash
-# Copy environment template
-cp .env.example .env
+3. **Start all services**
+   ```bash
+   docker-compose up -d
+   ```
 
-# Update database and Redis connection details in .env
-```
+4. **Access the application**
+   - Frontend: http://localhost:3006
+   - API Gateway: http://localhost:3000
+   - Database: localhost:5432
 
-3. **Start with Docker (Recommended)**
-```bash
-# Start all services (PostgreSQL, Redis, Backend, Frontend)
-docker-compose up -d
-
-# View logs
-docker-compose logs -f
-```
-
-4. **Or Start Manually**
-```bash
-# Start PostgreSQL and Redis locally
-# Then run:
-npm run dev
-```
-
-5. **Run Tests**
-```bash
-# Backend tests
-npm test
-
-# Frontend tests
-cd frontend && npm test
-
-# Test coverage
-npm run test:coverage
-```
-
-### Available Scripts
-
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Start both backend and frontend in development |
-| `npm run dev:backend` | Start only backend server |
-| `npm run dev:frontend` | Start only frontend application |
-| `npm run build` | Build both backend and frontend for production |
-| `npm test` | Run backend test suite |
-| `npm run lint` | Run ESLint on backend code |
-| `npm run format` | Format code with Prettier |
-
-### Development Phases
-
-#### ✅ Phase 1: Foundation (COMPLETED)
-- ✅ Project setup with TypeScript, Express, React
-- ✅ PostgreSQL and Redis configuration
-- ✅ Docker development environment
-- ✅ Testing framework setup
-- ✅ ESLint and Prettier configuration
-
-#### 🔄 Phase 2: Core Services
-- Authentication and authorization system
-- User management API and interface
-- Database models and migrations
-- Basic admin dashboard
-
-#### 📋 Phase 3: AI & Voice Integration
-- Voice processing service setup
-- AI engine integration
-- Natural language processing
-- Conversation context management
-
-#### 🔗 Phase 4: CRM Integration
-- Multi-CRM API abstraction layer
-- Salesforce, Creatio, and SAP connectors
-- Lead and task management
-- Data synchronization
-
-## 📋 Current Status
-
-✅ **Requirements Complete** - 25 comprehensive requirements covering all features  
-✅ **Design Complete** - Full system architecture and technical design  
-✅ **Implementation Plan Ready** - 19 major tasks with 42 detailed sub-tasks  
-🚀 **Ready for Development** - Spec-driven development can begin  
+### Default Login
+- Email: `admin@nia.ai`
+- Password: `admin123`
 
 ## 📁 Project Structure
 
 ```
-.kiro/specs/nia-admin-system/
-├── requirements.md    # 25 comprehensive requirements with EARS format
-├── design.md         # Complete system architecture and technical design
-└── tasks.md          # 19 major tasks with 42 detailed implementation steps
+nia-ai-sales-assistant/
+├── services/
+│   ├── api-gateway/          # API Gateway service
+│   ├── auth-service/         # Authentication service
+│   ├── voice-service/        # Voice processing service
+│   ├── ai-service/          # AI engine service
+│   ├── crm-service/         # CRM integration service
+│   └── notification-service/ # Notification service
+├── frontend/                 # React frontend application
+├── database/
+│   ├── init/                # Database initialization scripts
+│   └── migrations/          # Database migrations
+├── docker-compose.yml       # Docker services configuration
+└── README.md
 ```
 
-## 🔐 Security & Compliance
+## 🎯 Features
 
-- OAuth 2.0 authentication with refresh tokens
-- JWT-based access control
-- Role-based permissions
-- Comprehensive audit logging
-- Data encryption at rest and in transit
+### Voice Assistant
+- **Speech Recognition** - Google Speech-to-Text with Indian English support
+- **Natural Language Processing** - Intent detection and entity extraction
+- **Text-to-Speech** - Natural voice responses
+- **Multi-language Support** - English, Hindi, and Hinglish
+
+### CRM Integration
+- **Multi-CRM Support** - Salesforce, Creatio, and SAP
+- **Real-time Sync** - Automatic data synchronization
+- **Lead Management** - Create, update, and track leads
+- **Task Management** - Automated task creation and tracking
+- **Meeting Scheduling** - Calendar integration
+
+### Admin Dashboard
+- **User Management** - Role-based access control
+- **System Monitoring** - Health checks and performance metrics
+- **Analytics** - Sales performance and AI interaction analytics
+- **Configuration** - CRM setup and system settings
+
+## 🔧 Development
+
+### Running Individual Services
+
+Each service can be run independently for development:
+
+```bash
+# Auth Service
+cd services/auth-service
+npm install
+npm run dev
+
+# Voice Service
+cd services/voice-service
+npm install
+npm run dev
+
+# Frontend
+cd frontend
+npm install
+npm start
+```
+
+### Database Migrations
+
+```bash
+# Run migrations for a specific service
+cd services/auth-service
+npm run migrate
+```
+
+### Testing
+
+```bash
+# Run tests for all services
+docker-compose -f docker-compose.test.yml up
+
+# Run tests for a specific service
+cd services/auth-service
+npm test
+```
+
+## 🔐 Security
+
+- JWT-based authentication
+- Role-based access control
+- API rate limiting
+- Input validation and sanitization
+- Secure password hashing (bcrypt)
+- HTTPS enforcement in production
+
+## 📊 Monitoring
+
+- Winston logging across all services
+- Health check endpoints
+- Performance metrics
+- Error tracking and alerting
+
+## 🚀 Deployment
+
+### Production Deployment
+
+1. **Build production images**
+   ```bash
+   docker-compose -f docker-compose.prod.yml build
+   ```
+
+2. **Deploy to production**
+   ```bash
+   docker-compose -f docker-compose.prod.yml up -d
+   ```
+
+### Environment Variables
+
+Key environment variables to configure:
+
+```env
+# Database
+DATABASE_URL=postgresql://user:password@host:port/database
+
+# JWT
+JWT_SECRET=your-secret-key
+
+# Google Cloud (for voice processing)
+GOOGLE_CLOUD_PROJECT_ID=your-project-id
+GOOGLE_APPLICATION_CREDENTIALS=/path/to/credentials.json
+
+# CRM Integrations
+SALESFORCE_CLIENT_ID=your-salesforce-client-id
+SALESFORCE_CLIENT_SECRET=your-salesforce-client-secret
+
+# Email
+SMTP_HOST=smtp.gmail.com
+SMTP_USER=your-email@gmail.com
+SMTP_PASS=your-email-password
+```
 
 ## 🤝 Contributing
 
-This project follows a spec-driven development approach. Please review the requirements and design documents before contributing.
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-## 📄 License
+## 📝 License
 
-[License information to be added]
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
----
+## 🆘 Support
 
-**Built with ❤️ for sales professionals who want to work smarter, not harder.**
-## 🎯 
-Next Steps
+For support and questions:
+- Create an issue in the repository
+- Contact the development team
+- Check the documentation in `/docs`
 
-The spec is complete and ready for implementation! To start development:
+## 🗺️ Roadmap
 
-1. **Review the Spec Documents:**
-   - Read through `requirements.md` for feature understanding
-   - Study `design.md` for technical architecture
-   - Examine `tasks.md` for implementation roadmap
-
-2. **Begin Implementation:**
-   - Start with Task 1: Project foundation and development environment
-   - Follow the incremental approach outlined in the tasks
-   - Each task builds upon the previous ones
-
-3. **Development Approach:**
-   - Use test-driven development for all components
-   - Implement features incrementally with regular testing
-   - Focus on one task at a time for quality delivery
-
-**Ready to build the future of AI-powered sales assistance!** 🚀
+- [ ] Mobile application (React Native)
+- [ ] Advanced AI features (sentiment analysis, predictive analytics)
+- [ ] Additional CRM integrations
+- [ ] Offline capabilities
+- [ ] Advanced reporting and dashboards
+- [ ] Multi-tenant support

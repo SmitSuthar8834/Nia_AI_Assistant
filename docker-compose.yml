@@ -1,96 +1,175 @@
+# Nia AI Sales Assistant - Microservices Architecture
 version: '3.8'
 
 services:
+  # API Gateway
+  api-gateway:
+    build: ./services/api-gateway
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - JWT_SECRET=your-jwt-secret-key
+      - AUTH_SERVICE_URL=http://auth-service:3001
+      - VOICE_SERVICE_URL=http://voice-service:3002
+      - CRM_SERVICE_URL=http://crm-service:3003
+      - AI_SERVICE_URL=http://ai-service:3004
+      - NOTIFICATION_SERVICE_URL=http://notification-service:3005
+    depends_on:
+      - auth-service
+      - voice-service
+      - crm-service
+      - ai-service
+      - notification-service
+    networks:
+      - nia-network
+
+  # Authentication Service
+  auth-service:
+    build: ./services/auth-service
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://postgres:password@postgres:5432/nia_auth
+      - JWT_SECRET=your-jwt-secret-key
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - nia-network
+
+  # Voice Processing Service
+  voice-service:
+    build: ./services/voice-service
+    ports:
+      - "3002:3002"
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://postgres:password@postgres:5432/nia_voice
+      - GOOGLE_CLOUD_PROJECT_ID=your-project-id
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/credentials/google-credentials.json
+      - AI_SERVICE_URL=http://ai-service:3004
+    volumes:
+      - ./credentials:/app/credentials
+    depends_on:
+      - postgres
+      - ai-service
+    networks:
+      - nia-network
+
+  # AI Engine Service
+  ai-service:
+    build: ./services/ai-service
+    ports:
+      - "3004:3004"
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://postgres:password@postgres:5432/nia_ai
+      - OPENAI_API_KEY=your-openai-api-key
+      - GEMINI_API_KEY=your-gemini-api-key
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - nia-network
+
+  # CRM Integration Service
+  crm-service:
+    build: ./services/crm-service
+    ports:
+      - "3003:3003"
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://postgres:password@postgres:5432/nia_crm
+      - SALESFORCE_CLIENT_ID=your-salesforce-client-id
+      - SALESFORCE_CLIENT_SECRET=your-salesforce-client-secret
+      - CREATIO_BASE_URL=your-creatio-url
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - nia-network
+
+  # Notification Service
+  notification-service:
+    build: ./services/notification-service
+    ports:
+      - "3005:3005"
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://postgres:password@postgres:5432/nia_notifications
+      - FIREBASE_PROJECT_ID=your-firebase-project-id
+      - SMTP_HOST=smtp.gmail.com
+      - SMTP_PORT=587
+      - SMTP_USER=your-email@gmail.com
+      - SMTP_PASS=your-email-password
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - nia-network
+
+  # Frontend Application
+  frontend:
+    build: ./frontend
+    ports:
+      - "3006:3000"
+    environment:
+      - REACT_APP_API_URL=http://localhost:3000/api
+      - REACT_APP_WS_URL=ws://localhost:3000/ws
+    depends_on:
+      - api-gateway
+    networks:
+      - nia-network
+
   # PostgreSQL Database
   postgres:
     image: postgres:15-alpine
-    container_name: nia-postgres
-    environment:
-      POSTGRES_DB: nia_admin
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
     ports:
       - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=nia_main
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./database/init:/docker-entrypoint-initdb.d
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
     networks:
       - nia-network
 
   # Redis Cache
   redis:
     image: redis:7-alpine
-    container_name: nia-redis
     ports:
       - "6379:6379"
     volumes:
       - redis_data:/data
-    command: redis-server --appendonly yes
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
     networks:
       - nia-network
 
-  # Backend Application
-  backend:
-    build:
-      context: .
-      dockerfile: Dockerfile.dev
-    container_name: nia-backend
-    environment:
-      NODE_ENV: development
-      DB_HOST: postgres
-      DB_PORT: 5432
-      DB_NAME: nia_admin
-      DB_USER: postgres
-      DB_PASSWORD: password
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
+  # Message Queue (RabbitMQ)
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
     ports:
-      - "3000:3000"
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=password
     volumes:
-      - .:/app
-      - /app/node_modules
-      - /app/frontend/node_modules
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
+      - rabbitmq_data:/var/lib/rabbitmq
     networks:
       - nia-network
-    command: npm run dev:backend
-
-  # Frontend Application
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile.dev
-    container_name: nia-frontend
-    environment:
-      REACT_APP_API_URL: http://localhost:3000
-    ports:
-      - "3001:3001"
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-    depends_on:
-      - backend
-    networks:
-      - nia-network
-    command: npm start
 
 volumes:
   postgres_data:
   redis_data:
+  rabbitmq_data:
 
 networks:
   nia-network:

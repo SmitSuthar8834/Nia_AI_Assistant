@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { 
   Home, 
   Users, 
@@ -7,8 +7,12 @@ import {
   Database, 
   BarChart3,
   Mic,
-  LogOut
+  LogOut,
+  UserPlus,
+  Shield
 } from 'lucide-react';
+import { NiaLogo } from './NiaLogo';
+import { useTabManager } from './TabManager';
 
 const navigationItems = [
   { name: 'Dashboard', href: '/', icon: Home },
