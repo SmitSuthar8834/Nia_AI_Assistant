@@ -129,7 +129,12 @@ This implementation follows a **microservices architecture** with the following 
     - Implement voice adaptation for better recognition over time
     - _Requirements: 24.1, 24.2, 24.3, 24.5_
 - [x] 6. Build AI Engine Service (Microservice)
-  - [ ] 6.1 Create AI Service with LLM integration
+  - [x] 6.1 Create AI Service with LLM integration
+
+
+
+
+
     - Create dedicated AI processing microservice on port 3004
     - Set up Gemini Pro and GPT-4 API integration with fallback mechanisms
     - Implement prompt engineering for sales-specific contexts and scenarios
@@ -137,7 +142,12 @@ This implementation follows a **microservices architecture** with the following 
     - Add AI model switching and performance optimization
     - _Requirements: 6.4, 7.4, 14.2_
 
-  - [ ] 6.2 Implement intent detection and entity extraction pipeline
+  - [x] 6.2 Implement intent detection and entity extraction pipeline
+
+
+
+
+
     - Build custom NLP pipeline for sales intents (create_lead, schedule_meeting, etc.)
     - Implement named entity recognition for contact information extraction
     - Create structured JSON output generation with confidence scoring

@@ -2,6 +2,7 @@ import { SpeechClient } from '@google-cloud/speech';
 import { TextToSpeechClient } from '@google-cloud/text-to-speech';
 import axios from 'axios';
 import { logger } from '../utils/logger';
+import { pool } from '../database/connection';
 
 interface TranscriptionResult {
   text: string;
@@ -191,4 +192,3 @@ export class VoiceProcessor {
     }
   }
 }
-import { pool } from '../database/connection';
